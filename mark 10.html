@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UzUni - Университеты Узбекистана</title>
+  <meta name="description" content="Найди университет, грант и дедлайн подачи за 2 минуты. Список вузов для абитуриентов Узбекистана.">
+  <meta property="og:title"       content="UzUni — Университеты Узбекистана">
+  <meta property="og:description" content="Найди университет, грант и дедлайн подачи за 2 минуты.">
+  <meta property="og:type"        content="website">
+  <meta property="og:url"         content="https://uzuni.uz">
+  <meta name="theme-color"        content="#0B1F3A">
+
+  <!-- Google Fonts: Manrope — современный, чистый шрифт -->
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       ПЕРЕМЕННЫЕ — цвета, шрифты, отступы
+    ============================================================ */
+    :root {
+      --navy:       #0B1F3A;   /* тёмно-синий — главный цвет */
+      --navy-light: #162d52;   /* чуть светлее navy — для hover */
+      --blue:       #2563EB;   /* яркий синий — акценты, кнопки */
+      --blue-light: #EFF4FF;   /* очень светлый синий — фоны бейджей */
+      --white:      #FFFFFF;
+      --bg:         #F7F9FC;   /* светло-серый фон страниц */
+      --border:     #E2E8F0;   /* цвет рамок */
+      --text:       #0B1F3A;   /* основной текст */
+      --text-muted: #64748B;   /* серый текст — подписи, мета */
+      --green:      #16A34A;   /* цвет гранта */
+      --green-bg:   #F0FDF4;
+      --red:        #DC2626;   /* цвет срочного дедлайна */
+      --red-bg:     #FEF2F2;
+      --radius:     12px;
+      --radius-sm:  8px;
+      --shadow:     0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md:  0 4px 16px rgba(11,31,58,0.10);
+    }
+
+    /* ============================================================
+       СБРОС СТИЛЕЙ — убираем дефолтные отступы браузера
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Manrope', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ============================================================
+       НАВИГАЦИЯ — верхняя панель на всех страницах
+    ============================================================ */
+    nav {
+      background: var(--navy);
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;   /* поверх всего контента */
+    }
+
+    /* Логотип */
+    .nav-logo {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--white);
+      cursor: pointer;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-logo span {
+      color: #60A5FA;   /* синий акцент на второй части логотипа */
+    }
+
+    /* Ссылки в навигации */
+    .nav-links {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .nav-link {
+      color: rgba(255,255,255,0.7);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s;
+      border: none;
+      background: none;
+    }
+
+    .nav-link:hover { color: white; background: rgba(255,255,255,0.1); }
+
+    /* Активная ссылка — подсвечиваем текущую страницу */
+    .nav-link.active { color: white; background: rgba(255,255,255,0.15); }
+
+    /* ============================================================
+       СИСТЕМА СТРАНИЦ — каждая страница — отдельный блок
+       JavaScript показывает нужную и скрывает остальные
+    ============================================================ */
+    .page { display: none; }
+    .page.active { display: block; }
+
+
+    /* ============================================================
+       СТРАНИЦА 1: ГЛАВНАЯ
+    ============================================================ */
+
+    /* Герой — большой блок вверху главной страницы */
+    .hero {
+      background: var(--navy);
+      padding: 80px 24px 100px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Декоративный круг за текстом — просто украшение */
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(96,165,250,0.15);
+      color: #93C5FD;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(96,165,250,0.3);
+      margin-bottom: 24px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-size: clamp(32px, 6vw, 56px);  /* адаптивный размер */
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1.15;
+      letter-spacing: -1px;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 span { color: #60A5FA; }   /* синий акцент в заголовке */
+
+    .hero p {
+      font-size: 18px;
+      color: rgba(255,255,255,0.65);
+      max-width: 480px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+
+    /* Кнопки на главной */
+    .hero-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--blue);
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 14px 28px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: #1D4ED8;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(37,99,235,0.35);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 14px 28px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,0.25);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-outline:hover { background: rgba(255,255,255,0.1); }
+
+    /* Блок со статистикой под кнопками */
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      margin-top: 60px;
+      padding-top: 40px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      flex-wrap: wrap;
+    }
+
+    .stat { text-align: center; }
+
+    .stat-num {
+      font-size: 28px;
+      font-weight: 800;
+      color: white;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      margin-top: 4px;
+    }
+
+    /* Блок "Почему UzUni" */
+    .features {
+      padding: 80px 24px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--blue);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.2;
+      margin-bottom: 48px;
+      letter-spacing: -0.5px;
+    }
+
+    /* Сетка карточек преимуществ */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      transition: box-shadow 0.2s;
+    }
+
+    .feature-card:hover { box-shadow: var(--shadow-md); }
+
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--blue-light);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+
+    .feature-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .feature-card p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* CTA блок внизу главной */
+    .cta-section {
+      background: var(--navy);
+      margin: 0 24px 80px;
+      border-radius: 20px;
+      padding: 60px 40px;
+      text-align: center;
+      max-width: 852px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-section h2 {
+      font-size: 28px;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 12px;
+    }
+
+    .cta-section p {
+      color: rgba(255,255,255,0.6);
+      font-size: 16px;
+      margin-bottom: 28px;
+    }
+
+
+    /* ============================================================
+       СТРАНИЦА 2: КАТАЛОГ УНИВЕРСИТЕТОВ
+    ============================================================ */
+
+    .catalog-header {
+      background: var(--navy);
+      padding: 40px 24px 32px;
+    }
+
+    .catalog-header h1 {
+      font-size: 28px;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 6px;
+    }
+
+    .catalog-header p {
+      color: rgba(255,255,255,0.6);
+      font-size: 15px;
+    }
+
+    /* Блок поиска и фильтров */
+    .search-section {
+      background: white;
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      position: sticky;
+      top: 60px;   /* прилипает под навигацией */
+      z-index: 90;
+    }
+
+    /* Поле поиска */
+    .search-input-wrap {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .search-input-wrap svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 11px 14px 11px 42px;
+      font-family: 'Manrope', sans-serif;
+      font-size: 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      outline: none;
+      transition: border-color 0.2s;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .search-input:focus { border-color: var(--blue); background: white; }
+
+    /* Горизонтальный скролл для чипов-фильтров */
+    .filters-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;   /* скрывает скроллбар в Firefox */
+      padding-bottom: 2px;
+    }
+
+    .filters-row::-webkit-scrollbar { display: none; }  /* скрывает скроллбар в Chrome */
+
+    /* Один фильтр-чип */
+    .chip {
+      flex-shrink: 0;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1.5px solid var(--border);
+      background: white;
+      color: var(--text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+
+    .chip:hover { border-color: var(--blue); color: var(--blue); }
+
+    /* Активный фильтр */
+    .chip.active {
+      background: var(--navy);
+      color: white;
+      border-color: var(--navy);
+    }
+
+    /* Основной контент каталога */
+    .catalog-content {
+      padding: 24px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* Строка с количеством результатов */
+    .results-info {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+
+    /* Сетка карточек университетов */
+    .uni-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    /* Карточка одного университета */
+    .uni-card {
+      background: white;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .uni-card:hover {
+      border-color: var(--blue);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    /* Верхняя часть карточки: название + бейджи */
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .card-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.3;
+    }
+
+    .card-abbr {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      font-weight: 500;
+    }
+
+    /* Бейджи: Грант, Государственный, Негосударственный, Совместный */
+    .badges { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
+
+    .badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    .badge-grant  { background: var(--green-bg);  color: var(--green); }
+    .badge-state  { background: #F5F3FF;            color: #6D28D9; }
+
+    /* Мета-информация: страна, направления */
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .meta-tag {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: var(--text-muted);
+      background: var(--bg);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+
+    /* Нижняя часть карточки: цена + дедлайн */
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      margin-top: auto;
+    }
+
+    .price-block {}
+
+    .price-amount {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--navy);
+    }
+
+    .price-period {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Дедлайн — меняет цвет в зависимости от срочности */
+    .deadline-block {
+      text-align: right;
+    }
+
+    .deadline-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+
+    .deadline-date {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .deadline-urgent { color: var(--red); }
+    .deadline-ok     { color: var(--green); }
+    .deadline-normal { color: var(--text-muted); }
+
+    /* Кнопка перехода на сайт университета */
+    .card-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      padding: 10px;
+      background: var(--blue-light);
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      transition: all 0.15s;
+      border: none;
+      cursor: pointer;
+    }
+
+    .card-link:hover {
+      background: var(--blue);
+      color: white;
+    }
+
+    /* Пустое состояние — когда ничего не найдено */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state .emoji { font-size: 40px; margin-bottom: 12px; }
+    .empty-state h3 { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+    .empty-state p { font-size: 14px; }
+
+
+    /* ============================================================
+       ФУТЕР — нижняя часть всех страниц
+    ============================================================ */
+    footer {
+      background: var(--navy);
+      padding: 32px 24px;
+      text-align: center;
+      margin-top: 60px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    /* Кнопка Instagram — с градиентом */
+    .footer-instagram {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #E1306C, #833AB4);
+      color: white;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .footer-instagram:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .footer-copy {
+      font-size: 12px;
+      color: rgba(255,255,255,0.35);
+      margin-top: 4px;
+    }
+
+    /* ============================================================
+       РЕКЛАМНАЯ КАРТОЧКА — плейсхолдер между университетами
+    ============================================================ */
+    .ad-card {
+      background: white;
+      border: 1.5px dashed var(--border);   /* пунктирная рамка — отличие от обычных карточек */
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 12px;
+      min-height: 160px;
+      transition: border-color 0.2s;
+    }
+
+    .ad-card:hover { border-color: #F97316; }
+
+    .ad-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .ad-text {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.4;
+    }
+
+    .ad-subtext {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Кнопка "Разместить рекламу" → ведёт в Instagram */
+    .ad-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #E1306C, #833AB4);
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .ad-btn:hover { opacity: 0.85; }
+
+    /* Бейдж "Совместный" — оранжевый, отличается от международного и государственного */
+    .badge-joint  { background: #FFF7ED; color: #C2410C; }
+    .badge-private { background: #F5F5F5; color: #374151; }
+
+    /* ============================================================
+       РАСКРЫВАЮЩАЯСЯ ЧАСТЬ КАРТОЧКИ — скрыта по умолчанию
+    ============================================================ */
+    .card-expand {
+      display: none;             /* скрыта пока карточка не открыта */
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      margin-top: 4px;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Когда карточка открыта — показывает раскрытую часть */
+    .uni-card.open .card-expand { display: flex; }
+
+    /* Стрелка на кнопке переворачивается при открытии */
+    .uni-card.open .card-toggle-arrow { transform: rotate(180deg); }
+
+    .card-expand-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      gap: 8px;
+    }
+
+    .expand-label { color: var(--text-muted); font-weight: 500; flex-shrink: 0; }
+    .expand-val   { color: var(--navy);       font-weight: 600; text-align: right; }
+
+    /* Список документов — теги */
+    .docs-wrap { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 2px; }
+
+    .doc-tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 6px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    /* Кнопка раскрытия — в самом низу карточки перед кнопкой сайта */
+    .card-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      width: 100%;
+      padding: 8px;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'Manrope', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .card-toggle:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
+
+    .card-toggle-arrow { transition: transform 0.2s; display: inline-block; }
+
+    /* ============================================================
+       РЕКЛАМНЫЙ БЛОК НА ГЛАВНОЙ СТРАНИЦЕ
+    ============================================================ */
+    .home-ad-block {
+      max-width: 900px;
+      margin: 0 auto 40px;
+      padding: 0 24px;
+    }
+
+    /* Рекламная карточка на главной — шире и крупнее чем в каталоге */
+    .home-ad-card {
+      background: white;
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 32px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+      transition: border-color 0.2s;
+    }
+
+    .home-ad-card:hover { border-color: #F97316; }
+
+    .home-ad-left { display: flex; align-items: center; gap: 16px; }
+
+    .home-ad-logo {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-sm);
+      object-fit: contain;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+      padding: 8px;
+    }
+
+    .home-ad-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .home-ad-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+
+    .home-ad-text {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* ============================================================
+       СТРАНИЦА 4: ДЕТАЛЬНАЯ СТРАНИЦА УНИВЕРСИТЕТА
+    ============================================================ */
+
+    .uni-detail-header {
+      background: var(--navy);
+      padding: 24px 24px 32px;
+    }
+
+    /* Кнопка "← Назад к списку" */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Manrope', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.6);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      margin-bottom: 20px;
+      transition: color 0.15s;
+    }
+
+    .back-btn:hover { color: white; }
+
+    .uni-detail-name {
+      font-size: 26px;
+      font-weight: 800;
+      color: white;
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+
+    .uni-detail-sub {
+      font-size: 14px;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 16px;
+    }
+
+    .uni-detail-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* Основной контент страницы */
+    .uni-detail-content {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Блок с информацией — белая карточка */
+    .detail-block {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    .detail-block-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 16px;
+    }
+
+    /* Строка ключ-значение внутри блока */
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 16px;
+      font-size: 14px;
+    }
+
+    .detail-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .detail-key   { color: var(--text-muted); font-weight: 500; flex-shrink: 0; }
+    .detail-value { color: var(--navy);       font-weight: 700; text-align: right; }
+
+    .detail-description {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* Кнопка перехода на сайт — большая, во всю ширину */
+    .detail-website-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 16px;
+      background: var(--blue);
+      color: white;
+      font-family: 'Manrope', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: var(--radius);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .detail-website-btn:hover {
+      background: #1D4ED8;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(37,99,235,0.3);
+    }
+
+    @media (max-width: 600px) {
+      .hero { padding: 60px 20px 80px; }
+      .hero h1 { font-size: 30px; }
+      .hero-stats { gap: 28px; }
+      .form-row { grid-template-columns: 1fr; }
+      .uni-grid { grid-template-columns: 1fr; }
+      .catalog-content { padding: 16px; }
+      th:nth-child(3), td:nth-child(3),
+      th:nth-child(4), td:nth-child(4) { display: none; }  /* скрываем лишние колонки таблицы */
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       НАВИГАЦИЯ — видна на всех страницах
+  ============================================================ -->
+  <nav>
+    <div class="nav-logo" onclick="showPage('home')">Uz<span>Uni</span></div>
+    <div class="nav-links">
+      <button class="nav-link active" id="nav-home"    onclick="showPage('home')">Главная</button>
+      <button class="nav-link"        id="nav-catalog" onclick="showPage('catalog')">Университеты</button>
+    </div>
+  </nav>
+
+
+  <!-- ============================================================
+       СТРАНИЦА 1: ГЛАВНАЯ
+  ============================================================ -->
+  <div id="page-home" class="page active">
+
+    <!-- Герой-блок -->
+    <section class="hero">
+      <h1>Найди свой<br><span>университет</span> за 2 минуты</h1>
+      <p>Все гранты, контракты и дедлайны в одном месте.</p>
+      <div class="hero-buttons">
+        <button class="btn-primary" onclick="showPage('catalog')">Смотреть университеты →</button>
+        <button class="btn-outline" onclick="scrollToFeatures()">Узнать больше</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-num" id="stat-unis">5</div>
+          <div class="stat-label">Университетов</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">100%</div>
+          <div class="stat-label">Бесплатно</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Блок преимуществ -->
+    <section class="features" id="features">
+      <div class="section-title">Всё что нужно<br>абитуриенту</div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <h3>Быстрый поиск</h3>
+          <p>Фильтруй по типу вуза или ищи по названию. Находи нужное за секунды.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📅</div>
+          <h3>Актуальные дедлайны</h3>
+          <p>Видно сколько дней осталось до подачи. Не пропустишь важную дату.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📋</div>
+          <h3>Список документов</h3>
+          <p>Для каждого вуза — точный список того, что нужно собрать.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎓</div>
+          <h3>Гранты и контракты</h3>
+          <p>Сразу видно где есть грант. Сравнивай стоимость и условия легко.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Рекламный блок на главной — подтягивается из массива ads -->
+    <div class="home-ad-block" id="homeAdBlock"></div>
+
+    <!-- Блок призыва к действию -->
+    <section class="cta-section">
+      <h2>Начни поиск прямо сейчас</h2>
+      <p>Местные и зарубежные университеты — всё в одном месте</p>
+      <button class="btn-primary" onclick="showPage('catalog')">Открыть каталог →</button>
+    </section>
+
+  </div><!-- конец страницы Главная -->
+
+
+  <!-- ============================================================
+       СТРАНИЦА 2: КАТАЛОГ УНИВЕРСИТЕТОВ
+  ============================================================ -->
+  <div id="page-catalog" class="page">
+
+    <div class="catalog-header">
+      <h1>Университеты</h1>
+      <p>Найди подходящий вуз с удобными фильтрами</p>
+    </div>
+
+    <!-- Поиск и фильтры — прилипают при прокрутке -->
+    <div class="search-section">
+      <div class="search-input-wrap">
+        <!-- Иконка лупы -->
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <!-- Поле поиска — вызывает функцию filterUnis() при каждом вводе символа -->
+        <input class="search-input" id="searchInput" type="text"
+               placeholder="Поиск по названию или аббревиатуре..."
+               oninput="debouncedFilter()">
+      </div>
+
+      <!-- Чипы фильтров — при клике меняют activeFilter и вызывают filterUnis() -->
+      <div class="filters-row" id="filtersRow">
+        <div class="chip active" data-filter="all"     onclick="setFilter(this)">Все</div>
+        <div class="chip"        data-filter="state"   onclick="setFilter(this)">Государственные</div>
+        <div class="chip"        data-filter="private" onclick="setFilter(this)">🏛️ Негосударственные</div>
+        <div class="chip"        data-filter="joint"          onclick="setFilter(this)">🤝 Совместные</div>
+      </div>
+    </div>
+
+    <div class="catalog-content">
+      <!-- Строка с количеством найденных университетов -->
+      <div class="results-info" id="resultsInfo"></div>
+      <!-- Сюда JavaScript вставляет карточки -->
+      <div class="uni-grid" id="uniGrid"></div>
+    </div>
+
+  </div><!-- конец страницы Каталог -->
+
+
+  <!-- ============================================================
+       СТРАНИЦА 4: ДЕТАЛЬНАЯ СТРАНИЦА УНИВЕРСИТЕТА
+       Показывается при клике на карточку в каталоге.
+       JavaScript заполняет её данными нужного университета.
+  ============================================================ -->
+  <div id="page-uni" class="page">
+
+    <!-- Шапка с кнопкой "назад" — заполняется через JS -->
+    <div class="uni-detail-header" id="uniDetailHeader"></div>
+
+    <!-- Основной контент страницы — заполняется через JS -->
+    <div class="uni-detail-content" id="uniDetailContent"></div>
+
+  </div><!-- конец страницы Университет -->
+
+
+
+
+
+  <!-- Уведомление об успешном действии -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ============================================================
+       ФУТЕР — показывается внизу на всех страницах
+  ============================================================ -->
+  <footer>
+    <div class="footer-links">
+      <!-- Instagram → аккаунт uzuni.uz -->
+      <a class="footer-instagram" href="https://www.instagram.com/uzuni.uz" target="_blank" rel="noopener">
+        📸 @uzuni.uz
+      </a>
+    </div>
+    <div class="footer-copy">© 2026 UzUni · Для абитуриентов Узбекистана</div>
+  </footer>
+
+
+  <!-- ============================================================
+       JAVASCRIPT — вся логика сайта
+  ============================================================ -->
+  <script>
+
+    /* ----------------------------------------------------------
+       SUPABASE — настройки подключения
+       URL и ключ берутся из Settings → API на supabase.com
+    ---------------------------------------------------------- */
+    const SUPABASE_URL = 'https://emtcybfqripjcfoqbuta.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtdGN5YmZxcmlwamNmb3FidXRhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3NzQ2NTgsImV4cCI6MjA5NTM1MDY1OH0.m-pl7h9hK2YX_Mqd8oY_CtxP0JcehLkGrmPPeOEV_V4';
+
+    /* ----------------------------------------------------------
+       ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ: запрос к Supabase REST API
+       method  — GET / POST / PATCH / DELETE
+       table   — название таблицы ('universities' или 'ads')
+       body    — данные для отправки (для POST/PATCH)
+       filter  — строка фильтра для URL (например 'id=eq.5')
+    ---------------------------------------------------------- */
+    async function supabase(method, table, body = null, filter = '') {
+      const url = `${SUPABASE_URL}/rest/v1/${table}${filter ? '?' + filter : ''}`;
+      const headers = {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + (sessionStorage.getItem('sb_token') || SUPABASE_KEY),
+        'Content-Type': 'application/json',
+        'Prefer': method === 'POST' ? 'return=representation' : 'return=representation'
+      };
+      const res = await fetch(url, {
+        method,
+        headers,
+        body: body ? JSON.stringify(body) : null
+      });
+      if (!res.ok) {
+        const err = await res.text();
+        throw new Error(err);
+      }
+      /* DELETE возвращает пустой ответ */
+      const text = await res.text();
+      return text ? JSON.parse(text) : [];
+    }
+
+    /* ----------------------------------------------------------
+       ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ: конвертация строки БД → объект JS
+       Supabase хранит programs/docs/cities как текст через запятую
+    ---------------------------------------------------------- */
+    function dbToUni(row) {
+      return {
+        id:          row.id,
+        name:        row.name,
+        abbr:        row.abbr,
+        type:        row.type,
+        country:     row.country     || '',
+        cities:      row.cities      ? row.cities.split(',').map(s => s.trim()) : [],
+        priceMin:    row.price_min   || 0,
+        priceMax:    row.price_max   || 0,
+        has_grant:   row.has_grant   || false,
+        ielts:       row.ielts       || '—',
+        deadline:    row.deadline    || '',
+        website:     row.website     || '',
+        programs:    row.programs    ? row.programs.split(',').map(s => s.trim()) : [],
+        docs:        row.docs        ? row.docs.split(',').map(s => s.trim()) : [],
+        description: row.description || ''
+      };
+    }
+
+    /* ----------------------------------------------------------
+       ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ: конвертация объекта JS → строка БД
+    ---------------------------------------------------------- */
+    function uniToDb(u) {
+      return {
+        name:        u.name,
+        abbr:        u.abbr,
+        type:        u.type,
+        country:     u.country,
+        cities:      (u.cities  || []).join(', '),
+        price_min:   u.priceMin,
+        price_max:   u.priceMax,
+        has_grant:   u.has_grant,
+        ielts:       u.ielts,
+        deadline:    u.deadline || null,
+        website:     u.website,
+        programs:    (u.programs || []).join(', '),
+        docs:        (u.docs     || []).join(', '),
+        description: u.description
+      };
+    }
+
+    /* ----------------------------------------------------------
+       ДАННЫЕ — загружаются из Supabase, не зашиты в код
+    ---------------------------------------------------------- */
+    let universities = [];
+    let ads          = [];
+
+    /* ----------------------------------------------------------
+       ТЕКУЩИЙ ФИЛЬТР — хранит активный фильтр-чип
+    ---------------------------------------------------------- */
+    let activeFilter = 'all';
+
+    /* ----------------------------------------------------------
+       ФУНКЦИЯ: переключение между страницами
+    ---------------------------------------------------------- */
+    function showPage(pageId) {
+      if (pageId !== 'uni') history.pushState({}, '', window.location.pathname);
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+      document.getElementById('page-' + pageId).classList.add('active');
+      const navId = pageId === 'uni' ? 'catalog' : pageId;
+      const navEl = document.getElementById('nav-' + navId);
+      if (navEl) navEl.classList.add('active');
+      if (pageId === 'catalog') renderCatalog();
+      window.scrollTo(0, 0);
+    }
+
+    function scrollToFeatures() {
+      document.getElementById('features').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    /* ----------------------------------------------------------
+       ФУНКЦИЯ: подсчёт дней до дедлайна
+    ---------------------------------------------------------- */
+    function getDeadlineInfo(dateStr) {
+      if (!dateStr) return { label: '—', cls: 'deadline-normal' };
+      const deadline = new Date(dateStr);
+      const today    = new Date();
+      const days     = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
+      const label    = deadline.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+      if (days < 0)   return { days, label: 'Истёк',                   cls: 'deadline-urgent' };
+      if (days <= 30) return { days, label: label + ' · ' + days + 'д', cls: 'deadline-urgent' };
+      if (days <= 60) return { days, label: label + ' · ' + days + 'д', cls: 'deadline-ok'     };
+      return               { days, label,                               cls: 'deadline-normal' };
+    }
+
+    /* ----------------------------------------------------------
+       ФУНКЦИЯ: отрисовка карточек каталога
+    ---------------------------------------------------------- */
+    function renderCatalog() {
+      const grid   = document.getElementById('uniGrid');
+      const info   = document.getElementById('resultsInfo');
+      const search = document.getElementById('searchInput').value.toLowerCase().trim();
+
+      const filtered = universities.filter(u => {
+        const matchSearch = u.name.toLowerCase().includes(search) ||
+                            u.abbr.toLowerCase().includes(search);
+        if (!matchSearch) return false;
+        if (activeFilter === 'all') return true;
+        return u.type === activeFilter;
+      });
+
+      info.textContent = filtered.length + ' ' +
+        pluralize(filtered.length, 'университет', 'университета', 'университетов');
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column:1/-1">
+            <div class="emoji">🔍</div>
+            <h3>Ничего не найдено</h3>
+            <p>Попробуй изменить фильтры или поисковый запрос</p>
+          </div>`;
+        return;
+      }
+
+      function getAdCard(index) {
+        if (ads.length === 0) {
+          return `
+            <div class="ad-card">
+              <div class="ad-label">📢 Реклама</div>
+              <div class="ad-text">Здесь могла быть<br>ваша реклама</div>
+              <div class="ad-subtext">Напиши нам в Instagram чтобы разместить рекламу</div>
+              <a class="ad-btn" href="https://www.instagram.com/uzuni.uz" target="_blank" rel="noopener">
+                Написать нам ↗
+              </a>
+            </div>`;
+        }
+        const ad = ads[index % ads.length];
+        return `
+          <div class="ad-card" style="padding:0;overflow:hidden;border-style:solid">
+            <div style="position:relative">
+              <img src="${ad.banner}" alt="Реклама"
+                   style="width:100%;height:120px;object-fit:cover;display:block">
+              <div style="position:absolute;top:6px;left:8px;font-size:10px;font-weight:700;
+                          color:rgba(255,255,255,0.7);background:rgba(0,0,0,0.35);
+                          padding:2px 6px;border-radius:4px;letter-spacing:0.05em">РЕКЛАМА</div>
+            </div>
+            <div style="padding:10px 12px">
+              <a class="ad-btn" style="width:100%;justify-content:center"
+                 href="${ad.link}" target="_blank" rel="noopener">
+                Перейти на сайт ↗
+              </a>
+            </div>
+          </div>`;
+      }
+
+      let adIndex = 0;
+      const cards = filtered.map((u, index) => {
+        const dl = getDeadlineInfo(u.deadline);
+        const typeBadge =
+          u.type === 'joint'   ? `<span class="badge badge-joint">🤝 Совместный</span>` :
+          u.type === 'private' ? `<span class="badge badge-private">🏛️ Негосударственный</span>` :
+          u.type === 'state'   ? `<span class="badge badge-state">🇺🇿 Государственный</span>` :
+                                 `<span class="badge badge-joint">🤝 Совместный</span>`;
+        const grantBadge  = u.has_grant
+          ? `<span class="badge badge-grant">🎓 Грант</span>` : '';
+        const ieltsTag    = u.ielts !== '—'
+          ? `<span class="meta-tag">📝 IELTS ${u.ielts}</span>` : '';
+        const citiesTag   = u.cities && u.cities.length
+          ? `<span class="meta-tag">📍 ${u.cities.join(', ')}</span>` : '';
+        const programsText = u.programs.slice(0, 2).join(', ') +
+          (u.programs.length > 2 ? ` +${u.programs.length - 2}` : '');
+        const priceStr = u.priceMax && u.priceMax !== u.priceMin
+          ? `$${u.priceMin.toLocaleString()}–${u.priceMax.toLocaleString()}`
+          : `$${u.priceMin.toLocaleString()}`;
+
+        const card = `
+          <div class="uni-card" id="card-${u.id}" onclick="showUni(${u.id})" style="cursor:pointer">
+            <div class="card-head">
+              <div>
+                <div class="card-name">${u.name}</div>
+                <div class="card-abbr">${u.abbr} · ${u.country}</div>
+              </div>
+              <div class="badges">${typeBadge}${grantBadge}</div>
+            </div>
+            <div class="card-meta">
+              ${ieltsTag}${citiesTag}
+              <span class="meta-tag">📚 ${programsText}</span>
+            </div>
+            <div class="card-footer">
+              <div class="price-block">
+                <span class="price-amount">${priceStr}</span>
+                <span class="price-period"> /год</span>
+              </div>
+              <div class="deadline-block">
+                <div class="deadline-label">Дедлайн</div>
+                <div class="deadline-date ${dl.cls}">${dl.label}</div>
+              </div>
+            </div>
+            <div class="card-link" style="pointer-events:none">Подробнее →</div>
+          </div>`;
+        const adAfter = (index + 1) % 3 === 0 ? getAdCard(adIndex++) : '';
+        return card + adAfter;
+      });
+
+      grid.innerHTML = cards.join('');
+      document.getElementById('stat-unis').textContent = universities.length;
+    }
+
+    /* ----------------------------------------------------------
+       ФУНКЦИЯ: смена активного фильтра
+    ---------------------------------------------------------- */
+    function setFilter(el) {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      activeFilter = el.dataset.filter;
+      renderCatalog();
+    }
+
+    let _searchTimer;
+    function debouncedFilter() {
+      clearTimeout(_searchTimer);
+      _searchTimer = setTimeout(renderCatalog, 200);
+    }
+    function filterUnis() { renderCatalog(); }
+
+    /* ----------------------------------------------------------
+       ФУНКЦИЯ: склонение существительных
+    ---------------------------------------------------------- */
+    function pluralize(n, one, few, many) {
+      const mod10 = n % 10, mod100 = n % 100;
+      if (mod10 === 1 && mod100 !== 11) return one;
+      if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return few;
+      return many;
+    }
+
+    /* ----------------------------------------------------------
+       ФУНКЦИЯ: рекламный блок на главной
+    ---------------------------------------------------------- */
+    function renderHomeAd() {
+      const block = document.getElementById('homeAdBlock');
+      if (!block) return;
+      if (ads.length === 0) {
+        block.innerHTML = `
+          <div class="home-ad-card">
+            <div class="home-ad-left">
+              <div class="home-ad-logo">📢</div>
+              <div>
+                <div class="home-ad-label">Реклама</div>
+                <div class="home-ad-title">Здесь могла быть ваша реклама</div>
+                <div class="home-ad-text">Напиши нам в Instagram чтобы разместить рекламу</div>
+              </div>
+            </div>
+            <a class="ad-btn" href="https://www.instagram.com/uzuni.uz" target="_blank" rel="noopener">
+              Написать нам ↗
+            </a>
+          </div>`;
+      } else {
+        const ad = ads[0];
+        block.innerHTML = `
+          <div style="position:relative;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)">
+            <img src="${ad.banner}" alt="Реклама"
+                 style="width:100%;height:140px;object-fit:cover;display:block">
+            <div style="position:absolute;top:8px;left:10px;font-size:10px;font-weight:700;
+                        color:rgba(255,255,255,0.8);background:rgba(0,0,0,0.4);
+                        padding:2px 7px;border-radius:4px;letter-spacing:0.06em">РЕКЛАМА</div>
+            <a href="${ad.link}" target="_blank" rel="noopener"
+               style="position:absolute;bottom:10px;right:10px" class="ad-btn">
+              Перейти на сайт ↗
+            </a>
+          </div>`;
+      }
+    }
+
+    /* ----------------------------------------------------------
+       ФУНКЦИЯ: страница конкретного университета
+    ---------------------------------------------------------- */
+    function showUni(id) {
+      const u = universities.find(u => u.id === id);
+      if (!u) return;
+      history.pushState({}, '', '?uni=' + id);
+      const dl = getDeadlineInfo(u.deadline);
+      const typeBadge =
+        u.type === 'joint'   ? `<span class="badge badge-joint">🤝 Совместный</span>` :
+        u.type === 'private' ? `<span class="badge badge-private">🏛️ Негосударственный</span>` :
+        u.type === 'state'   ? `<span class="badge badge-state">🇺🇿 Государственный</span>` :
+                               `<span class="badge badge-joint">🤝 Совместный</span>`;
+      const grantBadge = u.has_grant
+        ? `<span class="badge badge-grant">🎓 Грант</span>` : '';
+      const priceStr = u.priceMax && u.priceMax !== u.priceMin
+        ? `$${u.priceMin.toLocaleString()}–$${u.priceMax.toLocaleString()}`
+        : `$${u.priceMin.toLocaleString()}`;
+      const docsHtml = (u.docs || []).map(d =>
+        `<span class="doc-tag">${d}</span>`).join('');
+
+      document.getElementById('uniDetailHeader').innerHTML = `
+        <button class="back-btn" onclick="showPage('catalog')">← Назад к списку</button>
+        <div class="uni-detail-name">${u.name}</div>
+        <div class="uni-detail-sub">${u.abbr} · ${u.country}</div>
+        <div class="uni-detail-badges">${typeBadge}${grantBadge}</div>`;
+
+      document.getElementById('uniDetailContent').innerHTML = `
+        <div class="detail-block">
+          <div class="detail-block-title">О программе</div>
+          <p class="detail-description">${u.description || 'Описание не добавлено.'}</p>
+        </div>
+        <div class="detail-block">
+          <div class="detail-block-title">Условия поступления</div>
+          <div class="detail-row">
+            <span class="detail-key">Города / филиалы</span>
+            <span class="detail-value">${(u.cities || []).join(', ') || 'Ташкент'}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-key">Стоимость в год</span>
+            <span class="detail-value">${priceStr}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-key">Требование IELTS</span>
+            <span class="detail-value">${u.ielts}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-key">Грант / стипендия</span>
+            <span class="detail-value">${u.has_grant ? '✅ Есть' : '❌ Нет'}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-key">Дедлайн подачи</span>
+            <span class="detail-value deadline-date ${dl.cls}">${dl.label}</span>
+          </div>
+        </div>
+        <div class="detail-block">
+          <div class="detail-block-title">Направления</div>
+          <div class="docs-wrap">
+            ${u.programs.map(p =>
+              `<span class="doc-tag" style="font-size:13px;padding:5px 12px">${p}</span>`
+            ).join('')}
+          </div>
+        </div>
+        ${docsHtml ? `
+        <div class="detail-block">
+          <div class="detail-block-title">📋 Необходимые документы</div>
+          <div class="docs-wrap">${docsHtml}</div>
+        </div>` : ''}
+        <a class="detail-website-btn" href="${u.website}" target="_blank" rel="noopener">
+          Перейти на официальный сайт ↗
+        </a>`;
+
+      showPage('uni');
+    }
+
+
+
+
+
+    /* ----------------------------------------------------------
+       ФУНКЦИЯ: уведомление (toast)
+    ---------------------------------------------------------- */
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    /* ----------------------------------------------------------
+       ИНИЦИАЛИЗАЦИЯ — загружаем данные из Supabase при старте
+    ---------------------------------------------------------- */
+    async function init() {
+      /* Показываем спиннер пока грузятся данные */
+      document.getElementById('uniGrid').innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--text-muted)">
+          <div style="font-size:32px;margin-bottom:12px">⏳</div>
+          <div style="font-size:14px;font-weight:600">Загружаем университеты...</div>
+        </div>`;
+
+      try {
+        /* Загружаем университеты и рекламу параллельно */
+        const [uniRows, adRows] = await Promise.all([
+          supabase('GET', 'universities', null, 'order=name.asc'),
+          supabase('GET', 'ads')
+        ]);
+
+        /* Конвертируем строки БД в JS объекты */
+        universities = uniRows.map(dbToUni);
+        ads          = adRows;
+
+      } catch(e) {
+        document.getElementById('uniGrid').innerHTML = `
+          <div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--text-muted)">
+            <div style="font-size:32px;margin-bottom:12px">⚠️</div>
+            <div style="font-size:14px;font-weight:600">Не удалось загрузить данные</div>
+            <div style="font-size:13px;margin-top:8px">Проверь интернет-соединение и обнови страницу</div>
+          </div>`;
+        return;
+      }
+
+      /* Рисует всё */
+      renderCatalog();
+      renderHomeAd();
+      document.getElementById('stat-unis').textContent = universities.length;
+
+      /* Deep link: ?uni=ID — открыть страницу конкретного вуза */
+      const urlParams = new URLSearchParams(window.location.search);
+      const uniParam  = urlParams.get('uni');
+      if (uniParam) {
+        showUni(parseInt(uniParam));
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
